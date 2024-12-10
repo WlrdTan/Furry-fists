@@ -136,7 +136,7 @@ class UI {
     public static void displayTitleScreen() {
         System.out.println("\n" +
             "====================================\n" +
-            "  WELCOME TO FURRY FISTS!\n" +
+            "      WELCOME TO FURRY FISTS!\n" +
             "====================================\n"
         );
     }
@@ -146,7 +146,8 @@ class UI {
     }
 
     public static int getPlayerChoice(String[] options) {
-        System.out.println("Choose an option:");
+        System.out.println("        Choose an option:");
+        System.out.println("");
         for (int i = 0; i < options.length; i++) {
             System.out.println((i + 1) + ". " + options[i]);
         }
@@ -154,6 +155,7 @@ class UI {
         Scanner scanner = new Scanner(System.in);
         int choice = -1;
         while (choice < 1 || choice > options.length) {
+            System.out.println("");
             System.out.print("Enter the number of your choice: ");
             if (scanner.hasNextInt()) {
                 choice = scanner.nextInt();
@@ -287,10 +289,12 @@ public class Game {
     public void setupGame() {
         // Menu music continues playing here
         List<String> availableChars = new ArrayList<>(ALL_CHARACTERS);
+        System.out.println("");
         String playerChar = UI.chooseCharacter("Choose your character:", availableChars);
         player = new Player(playerChar);
         availableChars.remove(playerChar);
 
+        System.out.println("");
         String opponentChar = UI.chooseCharacter("Choose your opponent:", availableChars);
         opponent = new Opponent(opponentChar);
 
