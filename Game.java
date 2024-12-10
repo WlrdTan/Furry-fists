@@ -5,6 +5,7 @@ import java.util.Random;
 import java.util.Scanner;
 import javax.sound.sampled.*;
 import java.io.File;
+import java.util.*;
 
 // === Character Class ===
 class Character {
@@ -57,8 +58,8 @@ class Dice {
 
 // === AudioManager Class ===
 class AudioManager {
-    private Clip backgroundClip; // For background music
-    private Clip sfxClip;        // For short sound effects
+    private Clip backgroundClip; 
+    private Clip sfxClip;       
 
     public void playBackground(String filePath, float volume) {
         stopBackground();
@@ -159,7 +160,6 @@ class UI {
             System.out.print("Enter the number of your choice: ");
             if (scanner.hasNextInt()) {
                 choice = scanner.nextInt();
-                // Play menu_select whenever a choice is made
                 audioManagerReference.playSFX("menu_select.wav", -10.0f);
             } else {
                 scanner.next();
@@ -176,7 +176,6 @@ class UI {
             System.out.print("Enter a volume level between 1 and 10: ");
             if (scanner.hasNextInt()) {
                 volume = scanner.nextInt();
-                // Play menu_select on valid input
                 audioManagerReference.playSFX("menu_select.wav", -10.0f);
             } else {
                 scanner.next();
@@ -253,12 +252,10 @@ public class Game {
     private AudioManager audioManager;
     private Scanner scanner = new Scanner(System.in);
 
-    // Expanded character list
     private static final List<String> ALL_CHARACTERS = Arrays.asList("dog", "cat", "dolphin", "rat", "wolf", "panda", "goat", "sloth");
-    private int level = 1; // start at level 1
+    private int level = 1; 
 
-    // Store current background volume level
-    private float currentVolume = -10.0f; // default at -10 dB
+    private float currentVolume = -10.0f; 
 
     public Game() {
         audioManager = new AudioManager();
@@ -267,27 +264,28 @@ public class Game {
 
     public void start() {
         UI.displayTitleScreen();
-        // Play menu music as background right from the start
         audioManager.playBackground("menu_music.wav", currentVolume);
 
         while (true) {
-            String[] menuOptions = { "Start Game", "Adjust Audio", "Quit" };
+            String[] menuOptions = { "Start Game", "Story Mode", "Adjust Audio", "Quit" };
             int choice = UI.getPlayerChoice(menuOptions);
             switch (choice) {
                 case 0:
                     setupGame();
                     break;
                 case 1:
-                    adjustAudio();
+                    startStoryMode();
                     break;
                 case 2:
+                    adjustAudio();
+                    break;
+                case 3:
                     System.exit(0);
             }
         }
     }
 
     public void setupGame() {
-        // Menu music continues playing here
         List<String> availableChars = new ArrayList<>(ALL_CHARACTERS);
         System.out.println("");
         String playerChar = UI.chooseCharacter("Choose your character:", availableChars);
@@ -299,22 +297,18 @@ public class Game {
         opponent = new Opponent(opponentChar);
 
         level = 1;
-        startGame(); // Now we move to gameplay
+        startGame(); 
     }
 
     public void adjustAudio() {
-        // Menu music continues playing, do not stop.
         int volumeChoice = UI.getVolumeChoice();
         currentVolume = convertVolumeToDecibel(volumeChoice);
 
-        // Just set the new volume for the currently playing menu music
         audioManager.setBackgroundVolume(currentVolume);
 
-        // Returning to main menu: the menu music is still playing, no restart needed.
     }
 
     public void startGame() {
-        // Now that characters are chosen and we start the game, stop menu music and start gameplay music
         audioManager.stopBackground();
         audioManager.playBackground("gameplay_music.wav", currentVolume);
         playGame();
@@ -322,11 +316,9 @@ public class Game {
 
     public void playGame() {
         while (player.isAlive() && opponent.isAlive()) {
-            // Player's turn
             playerTurn();
             if (!opponent.isAlive()) break;
 
-            // Opponent's turn
             opponentTurn();
         }
 
@@ -335,7 +327,6 @@ public class Game {
 
     private void endGame() {
         if (!player.isAlive()) {
-            // Stop gameplay music before playing defeat SFX
             audioManager.stopBackground();
             System.out.println(gruesomeDefeatMessage(opponent.name, player.name));
             audioManager.playSFX("defeat.wav", -5.0f);
@@ -343,25 +334,20 @@ public class Game {
             audioManager.stopSFX();
             switch (choice) {
                 case 0:
-                    // Replay the level
                     resetCharacters();
-                    // Gameplay music again
                     audioManager.stopBackground();
                     audioManager.playBackground("gameplay_music.wav", currentVolume);
                     playGame();
                     break;
                 case 1:
-                    // Back to main menu
                     audioManager.stopBackground();
                     audioManager.playBackground("menu_music.wav", currentVolume);
                     break;
                 case 2:
-                    // Quit
                     System.exit(0);
                     break;
             }
         } else if (!opponent.isAlive()) {
-            // Stop gameplay music before victory SFX
             audioManager.stopBackground();
             System.out.println(gruesomeVictoryMessage(player.name, opponent.name));
             audioManager.playSFX("victory.wav", -5.0f);
@@ -369,7 +355,6 @@ public class Game {
             audioManager.stopSFX();
             switch (choice) {
                 case 0:
-                    // Next level
                     level++;
                     resetCharacters();
                     audioManager.stopBackground();
@@ -377,12 +362,10 @@ public class Game {
                     playGame();
                     break;
                 case 1:
-                    // Back to main menu
                     audioManager.stopBackground();
                     audioManager.playBackground("menu_music.wav", currentVolume);
                     break;
                 case 2:
-                    // Quit
                     System.exit(0);
                     break;
             }
@@ -486,7 +469,6 @@ public class Game {
 
     private int chooseOpponentAttack() {
         if (level == 1) {
-            // Random approach
             Random rand = new Random();
             int[] attacks = {1,2,3};
             for (int i = 0; i < attacks.length; i++) {
@@ -507,13 +489,12 @@ public class Game {
             }
             return 1;
         } else {
-            // Intelligent approach (level 2 and above)
             if (opponent.sp >= 50) {
-                return 3; // Tertiary
+                return 3; 
             } else if (opponent.sp >= 25) {
-                return 2; // Secondary
+                return 2; 
             } else {
-                return 1; // Base
+                return 1; 
             }
         }
     }
@@ -545,7 +526,7 @@ public class Game {
     private boolean isNoDamageScenario() {
         Random rand = new Random();
         int chance = rand.nextInt(100); 
-        return chance < 10; // 10% chance
+        return chance < 10; 
     }
 
     private String noDamageMessage(String attacker) {
@@ -620,7 +601,78 @@ public class Game {
     public float convertVolumeToDecibel(int volume) {
         float minDb = -80.0f;
         float maxDb = 6.0f;
-        return minDb + ((maxDb - minDb) / 9) * (volume - 1);
+        return minDb + ((maxDb - minDb) * (volume - 1) / 9);
+    }
+
+    public void startStoryMode() {
+        System.out.println("Welcome to Story Mode! You will play as the dog.");
+
+        Player dog = new Player("dog");
+        dog.hp = dog.maxHp * 2; 
+        dog.sp = dog.maxSp * 3; 
+
+        Opponent sloth = new Opponent("sloth");
+        Opponent rat = new Opponent("rat");
+        Opponent wolf = new Opponent("wolf");
+        Opponent cat = new Opponent("cat");
+        cat.hp = cat.maxHp * 2; 
+
+        if (playStoryBattle(dog, sloth, "sloth") &&
+            playStoryBattle(dog, rat, "rat") &&
+            playStoryBattle(dog, wolf, "wolf")) {
+            System.out.println("You have reached the final battle against the cat!");
+            if (playStoryBattle(dog, cat, "cat")) {
+                System.out.println("Congratulations! You have completed Story Mode!");
+            } else {
+                System.out.println("You were defeated by the cat. Try again!");
+            }
+        } else {
+            System.out.println("You lost! Restart Story Mode to try again.");
+        }
+    }
+
+    private boolean playStoryBattle(Player player, Opponent opponent, String opponentName) {
+        System.out.println("You are battling the " + opponentName + "!");
+
+        while (player.isAlive() && opponent.isAlive()) {
+            int choice = UI.getAttackChoice(player, opponent);
+            int damage = 0;
+            switch (choice) {
+                case 1:
+                    damage = 5;
+                    break;
+                case 2:
+                    if (player.sp >= 25) {
+                        damage = Dice.roll();
+                        player.reduceSp(25);
+                    } else {
+                        System.out.println("Not enough SP! Using Base Attack.");
+                        damage = 5;
+                    }
+                    break;
+                case 3:
+                    if (player.sp >= 50) {
+                        damage = Dice.roll() * 2;
+                        player.reduceSp(50);
+                    } else {
+                        System.out.println("Not enough SP! Using Base Attack.");
+                        damage = 5;
+                    }
+                    break;
+            }
+            opponent.reduceHp(damage);
+
+            if (!opponent.isAlive()) {
+                System.out.println("You defeated the " + opponentName + "!");
+                break;
+            }
+
+            int oppDamage = Dice.roll() * 2;
+            player.reduceHp(oppDamage);
+            System.out.println("The " + opponentName + " attacked and dealt " + oppDamage + " damage!");
+        }
+
+        return player.isAlive();
     }
 
     public static void main(String[] args) {
