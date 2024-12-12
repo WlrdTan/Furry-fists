@@ -282,9 +282,10 @@ class UI {
                 }
             
                 public void startStoryMode() {
-                    System.out.println("____________________________________________\n           Welcome to Story Mode! \n\nYour the brave dog who has taken on the kings quest to go defeat \nthe horrible cat. While looking for the cat you come across");
-                    System.out.println("her three henchman and you must defeat them before you can defeat \nthe stupid gross cat that has not really done anything wront but we just dont like cats.");
-                    System.out.println("Now go defeat her friends, I mean her henchman.\n");
+                    System.out.println("_____________________________________________________________________");
+                    System.out.println("                     Welcome to Story Mode! \n\nYour the brave dog who has taken on the kings quest to go defeat \nthe horrible cat. While looking for the cat you come across");
+                    System.out.print("her three henchman and you must defeat them before you can defeat \nthe stupid gross cat that has not really done anything wront but \nwe just dont like cats.");
+                    System.out.println("Oh yeah you also lost you ability to heal \nso be carful but you have some extra health. Now go defeat her \nfriends, I mean her henchman.\n");
             
                     Player dog = new Player("dog");
                     dog.hp = dog.maxHp * 2;
@@ -299,14 +300,14 @@ class UI {
                     if (playStoryBattle(dog, sloth, "sloth") &&
                         playStoryBattle(dog, rat, "rat") &&
                         playStoryBattle(dog, wolf, "wolf")) {
-                        System.out.println("You have reached the final battle against the cat!");
+                        System.out.println("You have reached the final battle against the dumb cat that no one likes. Shes pretty dumb so you should be able to handle this. I hope.");
                         if (playStoryBattle(dog, cat, "cat")) {
-                            System.out.println("Congratulations! You have completed Story Mode!");
+                            System.out.println("Congratulations! You have just obliterated the cat for absolutly no reason, well one reason, no one likes cats.");
                         } else {
-                            System.out.println("You were defeated by the cat. Try again!");
+                            System.out.println("You were defeated by the dumb cat. Try again, and this time play smarter.");
                         }
                     } else {
-                        System.out.println("You lost! Restart Story Mode to try again.");
+                        System.out.println("Come on you lost!? I did not think it was that hard. Restart Story Mode to try again.");
                     }
                 }
             
